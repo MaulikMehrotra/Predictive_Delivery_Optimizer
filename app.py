@@ -187,8 +187,21 @@ if submitted:
             input_data[col] = 0
 
     # Scale numerics
-    num_cols = input_data.select_dtypes(include=np.number).columns.tolist()
-    input_data[num_cols] = scaler.transform(input_data[num_cols])
+    # Identify numeric columns expected by the scaler
+    expected_num_cols = scaler.feature_names_in_ if hasattr(scaler, 'feature_names_in_') else [
+    'Distance (KM)', 'Traffic Delay (minutes)', 'Order Value (₹)', 'Delivery Cost (₹)']
+
+    # Ensure the same numeric columns exist in the input
+    for col in expected_num_cols:
+        if col not in input_data.columns:
+            input_data[col] = 0  # Add missing columns with neutral values
+
+    # Reorder columns to match training
+    input_data = input_data.reindex(columns=expected_num_cols + [c for c in input_data.columns if c not in expected_num_cols])
+
+    # Apply scaling safely
+    input_data[expected_num_cols] = scaler.transform(input_data[expected_num_cols])
+
 
     # Predict
     pred = model.predict(input_data)[0]
