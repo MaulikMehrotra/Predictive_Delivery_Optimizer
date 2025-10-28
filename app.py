@@ -149,6 +149,12 @@ with st.form("predict_form"):
     carrier = col2.selectbox("Carrier", get_unique("Carrier"))
     segment = col1.selectbox("Customer Segment", get_unique("Customer_Segment"))
     category = col2.selectbox("Product Category", get_unique("Product_Category"))
+    weather_impact = st.selectbox(
+    "Weather Impact",
+    ["None", "Mild", "Severe"],
+    index=0
+)
+
 
     submitted = st.form_submit_button("Predict Delay")
 
@@ -164,7 +170,8 @@ if submitted:
         "Product_Category": category,
         "Fuel_Cost_per_KM": 0.0,
         "Delivery_Efficiency": 0.0,
-        "Revenue_per_KM": 0.0
+        "Revenue_per_KM": 0.0,
+        "Weather_Impact": [weather_impact]
     }])
 
     # Encode categorical inputs using saved encoders
