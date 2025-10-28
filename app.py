@@ -179,7 +179,10 @@ if submitted:
         if col in encoders:
             le = encoders[col]
             input_data[col] = input_data[col].apply(lambda x: x if x in le.classes_ else "Unknown")
-            input_data[col] = le.transform(input_data[col])
+            try:
+                input_data[col] = le.transform(input_data[col])
+            except ValueError:
+               input_data[col] = le.transform([le.classes_[0] if val not in le.classes_ else val for val in input_data[col]]) 
         else:
             input_data[col] = 0
 
