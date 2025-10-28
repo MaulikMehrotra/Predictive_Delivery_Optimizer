@@ -196,8 +196,13 @@ if submitted:
         if col not in input_data.columns:
             input_data[col] = 0  # Add missing columns with neutral values
 
-    # Reorder columns to match training
-    input_data = input_data.reindex(columns=expected_num_cols + [c for c in input_data.columns if c not in expected_num_cols])
+    # Convert to a list if it's a NumPy array
+    expected_num_cols = list(expected_num_cols)
+
+    # Make sure columns are ordered correctly but all exist
+    remaining_cols = [c for c in input_data.columns if c not in expected_num_cols]
+    input_data = input_data.reindex(columns=expected_num_cols + remaining_cols)
+
 
     # Apply scaling safely
     input_data[expected_num_cols] = scaler.transform(input_data[expected_num_cols])
